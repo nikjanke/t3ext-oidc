@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace Causal\Oidc\Service;
 
 use Causal\Oidc\AuthenticationContext;
+use Causal\Oidc\Utility\ConfigurationUtility;
 use InvalidArgumentException;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
+use TYPO3\CMS\Core\Http\ServerRequestFactory;
 use TYPO3\CMS\Core\Http\Uri;
 use TYPO3\CMS\Core\Site\Entity\SiteLanguage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -32,7 +34,7 @@ class OpenIdConnectService implements LoggerAwareInterface
     public function __construct(OAuthService $OAuthService, array $config = [])
     {
         $this->OAuthService = $OAuthService;
-        $this->config = $config ?: GeneralUtility::makeInstance(ExtensionConfiguration::class)->get('oidc') ?? [];
+        $this->config = $config ?: ConfigurationUtility::getConfigurationForOidc($this->getRequest()) ?? [];
     }
 
     public function isAuthenticationRequest(ServerRequestInterface $request): bool
@@ -181,5 +183,10 @@ class OpenIdConnectService implements LoggerAwareInterface
     protected function getAuthenticationUrlRoutePath(SiteLanguage $language): string
     {
         return $language->getBase()->getPath() . ($this->config['authenticationUrlRoute'] ?? 'oidc/authentication');
+    }
+
+    protected function getRequest(): ServerRequestInterface
+    {
+        return $GLOBALS['TYPO3_REQUEST'] ?? ServerRequestFactory::fromGlobals();
     }
 }
