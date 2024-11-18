@@ -6,6 +6,7 @@ namespace Causal\Oidc\Middleware;
 
 use Causal\Oidc\AuthenticationContext;
 use Causal\Oidc\Service\OpenIdConnectService;
+use Causal\Oidc\Utility\ConfigurationUtility;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -75,7 +76,7 @@ class OauthCallback implements MiddlewareInterface, LoggerAwareInterface
             return (new Response())->withStatus(400, 'Invalid state');
         }
         if ($state !== $authContext->getState()) {
-            $globalSettings = GeneralUtility::makeInstance(ExtensionConfiguration::class)->get('oidc') ?? [];
+            $globalSettings = ConfigurationUtility::getConfigurationForOidc($request) ?? [];
             if (!$globalSettings['oidcDisableCSRFProtection']) {
                 $this->logger->error('Invalid returning state detected', [
                     'expected' => $authContext->getState(),
