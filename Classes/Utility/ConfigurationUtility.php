@@ -28,10 +28,16 @@ abstract class ConfigurationUtility
 {
     /**
      * This loads the configuration from the extension and the site and merges them.
+     * You have to use the same names as in the Extensionconfiguration.
+     * Example:
+     * * oidc
+     * * * usersStoragePid
      * The site settings take precedence to overwrite specific settings.
      *
      * @param ServerRequestInterface|null $request
      * @return array
+     * @throws ExtensionConfigurationExtensionNotConfiguredException
+     * @throws ExtensionConfigurationPathDoesNotExistException
      */
     public static function getConfigurationForOidc(ServerRequestInterface $request = null): array
     {
@@ -39,13 +45,15 @@ abstract class ConfigurationUtility
         // try globals request object, when request is null
         $request = $request ?? $GLOBALS['TYPO3_REQUEST'] ?? ServerRequestFactory::fromGlobals();
         if ($siteFinder) {
+            $siteConfig = [];
+            $siteOidcSettings = [];
             foreach ($siteFinder->getAllSites() as $site) {
                 if ($request && $request->getUri() && $request->getUri()->getHost() === $site->getBase()->getHost()) {
                     $siteConfig = $site->getConfiguration();
                 }
             }
 
-            if ($siteConfig['settings']['oidc']) {
+            if ($siteConfig && $siteConfig['settings']['oidc']) {
                 $siteOidcSettings = $siteConfig['settings']['oidc'];
             }
             $extensionSettings = GeneralUtility::makeInstance(ExtensionConfiguration::class)->get('oidc') ?? [];
