@@ -23,7 +23,7 @@ use Causal\Oidc\Event\AuthenticationGetUserGroupsEvent;
 use Causal\Oidc\Event\AuthenticationPreUserEvent;
 use Causal\Oidc\Event\ModifyResourceOwnerEvent;
 use Causal\Oidc\Event\ModifyUserEvent;
-use Causal\Oidc\Utility\ConfigurationUtility;
+use Causal\Oidc\Utility\ConfigurationUtilityOidc;
 use InvalidArgumentException;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use League\OAuth2\Client\Token\AccessToken;
@@ -81,7 +81,7 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
      */
     public function __construct()
     {
-        $this->config = ConfigurationUtility::getConfigurationForOidc($this->getRequest()) ?? [];
+        $this->config = ConfigurationUtilityOidc::getConfigurationForOidc($this->getRequest()) ?? [];
     }
 
     /**
