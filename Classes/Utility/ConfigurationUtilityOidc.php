@@ -24,7 +24,7 @@ use TYPO3\CMS\Core\Site\Entity\Site;
 use TYPO3\CMS\Core\Site\SiteFinder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-abstract class ConfigurationUtility
+abstract class ConfigurationUtilityOidc
 {
     /**
      * This loads the configuration from the extension and the site and merges them.

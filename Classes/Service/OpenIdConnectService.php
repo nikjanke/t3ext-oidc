@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Causal\Oidc\Service;
 
 use Causal\Oidc\AuthenticationContext;
-use Causal\Oidc\Utility\ConfigurationUtility;
+use Causal\Oidc\Utility\ConfigurationUtilityOidc;
 use InvalidArgumentException;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
@@ -34,7 +34,7 @@ class OpenIdConnectService implements LoggerAwareInterface
     public function __construct(OAuthService $OAuthService, array $config = [])
     {
         $this->OAuthService = $OAuthService;
-        $this->config = $config ?: ConfigurationUtility::getConfigurationForOidc($this->getRequest()) ?? [];
+        $this->config = $config ?: ConfigurationUtilityOidc::getConfigurationForOidc($this->getRequest()) ?? [];
     }
 
     public function isAuthenticationRequest(ServerRequestInterface $request): bool
