@@ -59,6 +59,10 @@ abstract class ConfigurationUtilityOidc
             $extensionSettings = GeneralUtility::makeInstance(ExtensionConfiguration::class)->get('oidc') ?? [];
             if ($siteOidcSettings) {
                 $config = array_merge($extensionSettings, $siteOidcSettings);
+                if($siteOidcSettings['clientIdentifier']) {
+                    $config['oidcClientKey'] = $GLOBALS['SSO'][$siteOidcSettings['clientIdentifier']]['CLIENT_ID'];
+                    $config['oidcClientSecret'] = $GLOBALS['SSO'][$siteOidcSettings['clientIdentifier']]['CLIENT_ID'];
+                }
             } else {
                 $config = $extensionSettings;
             }
