@@ -23,6 +23,7 @@ use TYPO3\CMS\Core\Http\ServerRequestFactory;
 use TYPO3\CMS\Core\Site\Entity\Site;
 use TYPO3\CMS\Core\Site\SiteFinder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use WIRO\WiroMaster\Utility\SettingsUtility;
 
 abstract class ConfigurationUtilityOidc
 {
@@ -44,11 +45,13 @@ abstract class ConfigurationUtilityOidc
         $siteFinder = GeneralUtility::makeInstance(SiteFinder::class);
         // try globals request object, when request is null
         $request = $request ?? $GLOBALS['TYPO3_REQUEST'] ?? ServerRequestFactory::fromGlobals();
+        $rootPageId = '';
         if ($siteFinder) {
             $siteConfig = [];
             $siteOidcSettings = [];
             foreach ($siteFinder->getAllSites() as $site) {
                 if ($request && $request->getUri() && $request->getUri()->getHost() === $site->getBase()->getHost()) {
+                    $rootPageId = $site->getRootPageId();
                     $siteConfig = $site->getConfiguration();
                 }
             }
@@ -59,6 +62,10 @@ abstract class ConfigurationUtilityOidc
             $extensionSettings = GeneralUtility::makeInstance(ExtensionConfiguration::class)->get('oidc') ?? [];
             if ($siteOidcSettings) {
                 $config = array_merge($extensionSettings, $siteOidcSettings);
+                $config['rootPageId'] = $rootPageId;
+                $settings = GeneralUtility::removeDotsFromTS(SettingsUtility::getConfigurationFromExistingTsFe($rootPageId));
+                $userPid = $settings['plugin']['tx_femanager']['settings']['installateureStoragePid'];
+                $config['usersStoragePid'] = $userPid;
                 if($siteOidcSettings['clientIdentifier']) {
                     $config['oidcClientKey'] = $GLOBALS['SSO'][$siteOidcSettings['clientIdentifier']]['CLIENT_ID'];
                     $config['oidcClientSecret'] = $GLOBALS['SSO'][$siteOidcSettings['clientIdentifier']]['CLIENT_ID'];
