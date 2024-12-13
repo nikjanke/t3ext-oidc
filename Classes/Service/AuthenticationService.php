@@ -229,7 +229,7 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
     protected function getUserFromAccessToken(OAuthService $service, AccessToken $accessToken): bool|array
     {
         // Using the access token, we may look up details about the resource owner
-        if ($this->config['oidcEndpointUserInfo'] !== '') {
+        if ($this->config['oidcEndpointUserInfo'] !== '' && $this->config['oidcEndpointUserInfo'] !== null) {
             try {
                 $this->logger->debug('Retrieving resource owner');
                 $resourceOwner = $service->getResourceOwner($accessToken)->toArray();
