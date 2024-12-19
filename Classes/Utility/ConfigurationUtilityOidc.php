@@ -46,12 +46,14 @@ abstract class ConfigurationUtilityOidc
         // try globals request object, when request is null
         $request = $request ?? $GLOBALS['TYPO3_REQUEST'] ?? ServerRequestFactory::fromGlobals();
         $rootPageId = '';
+        $baseDomain = '';
         if ($siteFinder) {
             $siteConfig = [];
             $siteOidcSettings = [];
             foreach ($siteFinder->getAllSites() as $site) {
                 if ($request && $request->getUri() && $request->getUri()->getHost() === $site->getBase()->getHost()) {
                     $rootPageId = $site->getRootPageId();
+                    $baseDomain = $site->getBase();
                     $siteConfig = $site->getConfiguration();
                 }
             }
@@ -63,6 +65,7 @@ abstract class ConfigurationUtilityOidc
             if ($siteOidcSettings) {
                 $config = array_merge($extensionSettings, $siteOidcSettings);
                 $config['rootPageId'] = $rootPageId;
+                $config['oidcRedirectUri'] = $baseDomain.$config['oidcRedirectUri'];
                 $settings = GeneralUtility::removeDotsFromTS(SettingsUtility::getConfigurationFromExistingTsFe($rootPageId));
                 $userPid = $settings['plugin']['tx_femanager']['settings']['installateureStoragePid'];
                 $config['usersStoragePid'] = $userPid;
