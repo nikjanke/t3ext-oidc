@@ -67,7 +67,7 @@ abstract class ConfigurationUtilityOidc
                 $config['rootPageId'] = $rootPageId;
                 $config['oidcRedirectUri'] = $baseDomain.$config['oidcRedirectUri'];
                 $settings = GeneralUtility::removeDotsFromTS(SettingsUtility::getConfigurationFromExistingTsFe($rootPageId));
-                $userPid = $settings['plugin']['tx_femanager']['settings']['installateureStoragePid'];
+                $userPid = $settings['plugin']['tx_wirohub']['settings']['ids']['data']['plumber'];
                 $config['usersStoragePid'] = $userPid;
                 if($siteOidcSettings['clientIdentifier']) {
                     $config['oidcClientKey'] = $GLOBALS['SSO'][$siteOidcSettings['clientIdentifier']]['CLIENT_ID'];
